@@ -1,41 +1,37 @@
-// index.tsx
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Linking, ImageBackground, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ImageBackground, Alert } from 'react-native';
 
-const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+const RegisterScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [fullName, setFullName] = useState<string>(''); // Nuevo estado para el nombre completo del usuario
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     try {
-      const response = await fetch('http://10.0.2.2:3000/login', {
+      const response = await fetch('http://10.0.2.2:3000/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, password, fullName }), // Incluir fullName en el cuerpo de la solicitud
       });
 
       const data = await response.json();
       console.log('Response data:', data);
 
       if (response.ok) {
-        Alert.alert('Login successful', `Token: ${data.token}`);
-        navigation.navigate('Index2'); // Redirigir a la pantalla de inicio exitoso después del login
+        Alert.alert('Registration successful', 'You can now log in');
+        navigation.navigate('Login', { fullName }); // Redirigir a la pantalla de inicio de sesión con fullName
       } else {
-        Alert.alert('Login failed', data.message);
+        Alert.alert('Registration failed', data.message);
       }
     } catch (error) {
       if (error instanceof Error) {
-        console.error('Login error:', error);
+        console.error('Registration error:', error);
         Alert.alert('An error occurred', error.message);
       } else {
         console.error('Unknown error:', error);
         Alert.alert('An error occurred', 'An unknown error occurred');
       }
     }
-  };
-
-  const handleCreateAccount = () => {
-    navigation.navigate('Register'); // Redirigir a la pantalla de registro al presionar
   };
 
   return (
@@ -48,9 +44,16 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           source={{ uri: 'https://www.lafrenchfab.fr/storage/sites/2/2024/01/Logo_large_AquaTech_baseline.png' }}
           style={styles.logo}
         />
-        <Text style={styles.title}>Welcome!</Text>
+        <Text style={styles.title}>Create Account</Text>
       </View>
       <View style={styles.formContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Full Name" // Campo para el nombre completo
+          placeholderTextColor="#888"
+          value={fullName}
+          onChangeText={setFullName}
+        />
         <TextInput
           style={styles.input}
           placeholder="Username"
@@ -66,20 +69,14 @@ const LoginScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           value={password}
           onChangeText={setPassword}
         />
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginButtonText}>Log in</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.createButton} onPress={handleCreateAccount}>
-          <Text style={styles.createButtonText}>Create</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => Linking.openURL('#')}>
-          <Text style={styles.forgotPasswordText}>Forgot Password</Text>
+        <TouchableOpacity style={styles.createButton} onPress={handleRegister}>
+          <Text style={styles.createButtonText}>Create Account</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Don't Have an Account?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-          <Text style={styles.footerLink}>Sign Up</Text>
+        <Text style={styles.footerText}>Already have an account?</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.footerLink}>Log In</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -117,19 +114,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginVertical: 10,
   },
-  loginButton: {
-    width: '100%',
-    height: 40,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 5,
-    marginVertical: 10,
-  },
-  loginButtonText: {
-    color: '#000',
-    fontSize: 16,
-  },
   createButton: {
     width: '100%',
     height: 40,
@@ -142,10 +126,6 @@ const styles = StyleSheet.create({
   createButtonText: {
     color: '#000',
     fontSize: 16,
-  },
-  forgotPasswordText: {
-    color: '#87ceeb',
-    marginTop: 10,
   },
   footer: {
     position: 'absolute',
@@ -161,4 +141,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default RegisterScreen;

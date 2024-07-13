@@ -40,6 +40,12 @@
         "projectId": "b2674338-d0f1-4cab-8635-9c929462e0ab"
       }
     },
-    "owner": "alexgarci8"
+    "owner": "alexgarci8",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b2674338-d0f1-4cab-8635-9c929462e0ab"
+    }
   }
 }
